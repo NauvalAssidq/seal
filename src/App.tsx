@@ -46,6 +46,14 @@ import { AllAllowlist } from './OwnedAllowlists';
 import { AllServices } from './OwnedSubscriptionServices';
 import Feeds from './AllowlistView';
 
+type FeatureCard = {
+  title: string;
+  icon: JSX.Element;
+  description: string;
+  buttonText: string;
+  linkTo: string;
+};
+
 const FeatureCard = ({ title, icon, description, buttonText, linkTo }) => (
   <Card 
     variant="surface" 
