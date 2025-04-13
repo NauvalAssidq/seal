@@ -1,7 +1,7 @@
 // Copyright (c), Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit';
 import {
   Box,
@@ -54,7 +54,15 @@ type FeatureCard = {
   linkTo: string;
 };
 
-const FeatureCard = ({ title, icon, description, buttonText, linkTo }) => (
+interface FeatureCardProps {
+  title: string;
+  icon: JSX.Element;
+  description: string;
+  buttonText: string;
+  linkTo: string;
+}
+
+const FeatureCard = ({ title, icon, description, buttonText, linkTo }: FeatureCardProps) => (
   <Card 
     variant="surface" 
     size="3"

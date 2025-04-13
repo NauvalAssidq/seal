@@ -97,7 +97,7 @@ export function SubscriptionServiceAdminView({ setRecipientAllowlist, setCapId }
 
         // 2. Fetch Capability Object
         const capRes = await suiClient.getOwnedObjects({
-          owner: currentAccount.address,
+          owner: currentAccount?.address || '',
           options: { showContent: true, showType: true },
           filter: { StructType: `${packageId}::subscription::Cap` },
         });
@@ -220,7 +220,7 @@ export function SubscriptionServiceAdminView({ setRecipientAllowlist, setCapId }
         {/* Main Content Grid */}
         <Grid columns={{ initial: '1', sm: '1' }} gap="4" mt="2">
           {/* Service Details Card */}
-          <Card variant="outline">
+          <Card variant="surface">
             <Flex direction="column" gap="4" p="3">
               <Heading size="3">Service Details</Heading>
               
@@ -245,7 +245,7 @@ export function SubscriptionServiceAdminView({ setRecipientAllowlist, setCapId }
           </Card>
           
           {/* Shareable Link Section */}
-          <Card variant="outline">
+          <Card variant="surface">
             <Flex direction="column" gap="3" p="3">
               <Flex align="center" gap="2">
                 <Share2 size={16} color="var(--accent-9)" />
