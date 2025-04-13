@@ -4,8 +4,18 @@
 import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { useNetworkVariable } from './networkConfig';
-import { Button, Card } from '@radix-ui/themes';
+import { 
+  Button, 
+  Card, 
+  Flex, 
+  Heading, 
+  Text, 
+  Box, 
+  Separator,
+  Badge 
+} from '@radix-ui/themes';
 import { getObjectExplorerLink } from './utils';
+import { Loader2, ExternalLink, List, Users } from 'lucide-react';
 
 export interface Cap {
   id: string;
@@ -25,75 +35,130 @@ export function AllAllowlist() {
   const suiClient = useSuiClient();
 
   const [cardItems, setCardItems] = useState<CardItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getCapObj = useCallback(async () => {
     if (!currentAccount?.address) return;
-
-    const res = await suiClient.getOwnedObjects({
-      owner: currentAccount?.address,
-      options: {
-        showContent: true,
-        showType: true,
-      },
-      filter: {
-        StructType: `${packageId}::allowlist::Cap`,
-      },
-    });
-    const caps = res.data
-      .map((obj) => {
-        const fields = (obj!.data!.content as { fields: any }).fields;
-        return {
-          id: fields?.id.id,
-          allowlist_id: fields?.allowlist_id,
-        };
-      })
-      .filter((item) => item !== null) as Cap[];
-    const cardItems: CardItem[] = await Promise.all(
-      caps.map(async (cap) => {
-        const allowlist = await suiClient.getObject({
-          id: cap.allowlist_id,
-          options: { showContent: true },
-        });
-        const fields = (allowlist.data?.content as { fields: any })?.fields || {};
-        return {
-          cap_id: cap.id,
-          allowlist_id: cap.allowlist_id,
-          list: fields.list,
-          name: fields.name,
-        };
-      }),
-    );
-    setCardItems(cardItems);
-  }, [currentAccount?.address]);
+    
+    try {
+      setIsLoading(true);
+      
+      const res = await suiClient.getOwnedObjects({
+        owner: currentAccount.address,
+        options: {
+          showContent: true,
+          showType: true,
+        },
+        filter: {
+          StructType: `${packageId}::allowlist::Cap`,
+        },
+      });
+      
+      const caps = res.data
+        .map((obj) => {
+          const fields = (obj!.data!.content as { fields: any }).fields;
+          return {
+            id: fields?.id.id,
+            allowlist_id: fields?.allowlist_id,
+          };
+        })
+        .filter((item) => item !== null) as Cap[];
+        
+      const cardItems: CardItem[] = await Promise.all(
+        caps.map(async (cap) => {
+          const allowlist = await suiClient.getObject({
+            id: cap.allowlist_id,
+            options: { showContent: true },
+          });
+          const fields = (allowlist.data?.content as { fields: any })?.fields || {};
+          return {
+            cap_id: cap.id,
+            allowlist_id: cap.allowlist_id,
+            list: fields.list,
+            name: fields.name,
+          };
+        }),
+      );
+      
+      setCardItems(cardItems);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching allowlists:", error);
+      setIsLoading(false);
+    }
+  }, [currentAccount?.address, packageId, suiClient]);
 
   useEffect(() => {
     getCapObj();
+    
+    // Set up interval to refresh data
+    const intervalId = setInterval(() => {
+      getCapObj();
+    }, 5000);
+    
+    return () => clearInterval(intervalId);
   }, [getCapObj]);
 
   return (
-    <Card>
-      <h2 style={{ marginBottom: '1rem' }}>Admin View: Owned Allowlists</h2>
-      <p style={{ marginBottom: '2rem' }}>
-        These are all the allowlists that you have created. Click manage to edit the allowlist and
-        upload new files to the allowlist.
-      </p>
-      {cardItems.map((item) => (
-        <Card key={`${item.cap_id} - ${item.allowlist_id}`}>
-          <p>
-            {item.name} (ID {getObjectExplorerLink(item.allowlist_id)})
-          </p>
-          <Button
-            onClick={() => {
-              window.open(
-                `${window.location.origin}/allowlist-example/admin/allowlist/${item.allowlist_id}`,
-                '_blank',
-              );
-            }}
-          >
-            Manage
-          </Button>
+    <Box style={{ maxWidth: '100%' }}>
+      {isLoading ? (
+        <Flex align="center" justify="center" py="6">
+          <Loader2 className="animate-spin" size={24} />
+        </Flex>
+      ) : cardItems.length === 0 ? (
+        <Card size="2" style={{ padding: '16px', textAlign: 'center' }}>
+          <Flex direction="column" align="center" justify="center" gap="2" py="4">
+            <List size={24} strokeWidth={1.5} style={{ opacity: 0.6 }} />
+            <Text color="gray">No allowlists found.</Text>
+          </Flex>
         </Card>
-      ))}
-    </Card>
+      ) : (
+        <Flex direction="column" gap="3">
+          {cardItems.map((item) => (
+            <Card key={`${item.cap_id}-${item.allowlist_id}`} style={{ overflow: 'hidden' }}>
+              <Flex direction="column" gap="3" p="4">
+                <Flex justify="between" align="center">
+                  <Flex align="center" gap="2">
+                    <Users size={18} />
+                    <Heading size="3">{item.name}</Heading>
+                  </Flex>
+                  <Badge variant="soft" radius="full">
+                    <a 
+                      href={`https://explorer.sui.io/object/${item.allowlist_id}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <Text size="1">ID: {item.allowlist_id.substring(0, 6)}...{item.allowlist_id.substring(item.allowlist_id.length - 4)}</Text>
+                      <ExternalLink size={12} />
+                    </a>
+                  </Badge>
+                </Flex>
+                
+                <Separator size="4" />
+                
+                <Flex align="center" gap="1">
+                  <Text size="2" weight="bold" color="gray">Addresses in list:</Text>
+                  <Text size="2">{item.list.length}</Text>
+                </Flex>
+                
+                <Flex justify="end" mt="2">
+                  <Button 
+                    onClick={() => {
+                      window.open(
+                        `${window.location.origin}/allowlist-example/admin/allowlist/${item.allowlist_id}`,
+                        '_blank',
+                      );
+                    }}
+                  >
+                    Manage
+                  </Button>
+                </Flex>
+              </Flex>
+            </Card>
+          ))}
+        </Flex>
+      )}
+    </Box>
   );
 }

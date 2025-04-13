@@ -2,10 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNetworkVariable } from './networkConfig';
-import { Button, Card } from '@radix-ui/themes';
+import { 
+  Button, 
+  Card, 
+  Flex, 
+  Heading, 
+  Text, 
+  Box, 
+  Separator,
+  Badge 
+} from '@radix-ui/themes';
 import { getObjectExplorerLink } from './utils';
+import { Loader2, ExternalLink } from 'lucide-react';
 
 export interface Cap {
   id: string;
@@ -26,12 +36,15 @@ export function AllServices() {
   const suiClient = useSuiClient();
 
   const [cardItems, setCardItems] = useState<CardItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function getCapObj() {
+  const getCapObj = useCallback(async () => {
+    if (!currentAccount?.address) return;
+    
+    try {
       // get all owned cap objects
       const res = await suiClient.getOwnedObjects({
-        owner: currentAccount?.address!,
+        owner: currentAccount.address,
         options: {
           showContent: true,
           showType: true,
@@ -40,6 +53,7 @@ export function AllServices() {
           StructType: `${packageId}::subscription::Cap`,
         },
       });
+      
       const caps = res.data
         .map((obj) => {
           const fields = (obj!.data!.content as { fields: any }).fields;
@@ -67,9 +81,16 @@ export function AllServices() {
           };
         }),
       );
+      
       setCardItems(cardItems);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching services:", error);
+      setIsLoading(false);
     }
+  }, [currentAccount?.address, packageId, suiClient]);
 
+  useEffect(() => {
     // Call getCapObj immediately
     getCapObj();
 
@@ -80,36 +101,77 @@ export function AllServices() {
 
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
-  }, [currentAccount?.address]); // Empty dependency array since we don't need any external values
+  }, [getCapObj]);
+
+  const formatTime = (ttl: string) => {
+    if (!ttl) return 'N/A';
+    const minutes = Math.floor(parseInt(ttl) / 60 / 1000);
+    return `${minutes} minutes`;
+  };
 
   return (
-    <div>
-      <h2 style={{ marginBottom: '1rem' }}>Admin View: Owned Subscription Services</h2>
-      <p style={{ marginBottom: '2rem' }}>
-        This is all the services that you have created. Click manage to upload new files to the
-        service.
-      </p>
-      {cardItems.map((item) => (
-        <Card key={`${item.id}`}>
-          <p>
-            <strong>
-              {item.name} (ID {getObjectExplorerLink(item.id)})
-            </strong>
-          </p>
-          <p>Subscription Fee: {item.fee} MIST</p>
-          <p>Subscription Duration: {item.ttl ? parseInt(item.ttl) / 60 / 1000 : 'null'} minutes</p>
-          <Button
-            onClick={() => {
-              window.open(
-                `${window.location.origin}/subscription-example/admin/service/${item.id}`,
-                '_blank',
-              );
-            }}
-          >
-            Manage
-          </Button>
+    <Box style={{ maxWidth: '100%' }}>
+      {isLoading ? (
+        <Flex align="center" justify="center" py="6">
+          <Loader2 className="animate-spin" size={24} />
+        </Flex>
+      ) : cardItems.length === 0 ? (
+        <Card size="2" style={{ padding: '16px', textAlign: 'center' }}>
+          <Text color="gray">No subscription services found.</Text>
         </Card>
-      ))}
-    </div>
+      ) : (
+        <Flex direction="column" gap="3">
+          {cardItems.map((item) => (
+            <Card key={item.id} style={{ overflow: 'hidden' }}>
+              <Flex direction="column" gap="3" p="3">
+                <Flex justify="between" align="center">
+                  <Heading size="3">
+                    {item.name}
+                  </Heading>
+                  <Badge variant="soft" radius="full">
+                    <a 
+                      href={`https://testnet.suivision.xyz/object/${item.id}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <Text size="1">ID: {item.id.substring(0, 6)}...{item.id.substring(item.id.length - 4)}</Text>
+                      <ExternalLink size={12} />
+                    </a>
+                  </Badge>
+                </Flex>
+                
+                <Separator size="4" />
+                
+                <Flex direction="row" gap="4">
+                  <Box>
+                    <Text size="2" weight="bold" color="gray">Subscription Fee: </Text>
+                    <Text size="3">{item.fee} MIST</Text>
+                  </Box>
+                  
+                  <Box>
+                    <Text size="2" weight="bold" color="gray">Duration: </Text>
+                    <Text size="3">{formatTime(item.ttl)}</Text>
+                  </Box>
+                </Flex>
+                
+                <Flex justify="end" mt="2">
+                  <Button 
+                    onClick={() => {
+                      window.open(
+                        `${window.location.origin}/subscription-example/admin/service/${item.id}`,
+                        '_blank',
+                      );
+                    }}
+                  >
+                    Manage
+                  </Button>
+                </Flex>
+              </Flex>
+            </Card>
+          ))}
+        </Flex>
+      )}
+    </Box>
   );
 }
