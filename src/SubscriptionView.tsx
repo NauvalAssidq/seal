@@ -1,6 +1,6 @@
 // Copyright (c), Mysten Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
-import { React, useEffect, useState, useCallback } from 'react';
+import { act, useEffect, useState, useCallback } from 'react';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
