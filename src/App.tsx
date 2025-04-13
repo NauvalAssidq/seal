@@ -14,7 +14,6 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { AllAllowlist } from './OwnedAllowlists';
 import { AllServices } from './OwnedSubscriptionServices';
 import Feeds from './AllowlistView';
-import { FiLock, FiBell, FiUploadCloud, FiUsers, FiDollarSign } from 'react-icons/fi';
 
 function LandingPage() {
   return (
@@ -26,7 +25,9 @@ function LandingPage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-700">
           <div className="flex flex-col items-center h-full space-y-6">
             <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-full">
-              <FiUsers className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 14v8H4a8 8 0 0 1 8-8zm0-1c-3.315 0-6-2.685-6-6s2.685-6 6-6 6 2.685 6 6-2.685 6-6 6zm9 4h1v5h-8v-5h1v-1a3 3 0 0 1 6 0v1zm-2 0v-1a1 1 0 0 0-2 0v1h2z"/>
+              </svg>
             </div>
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Allowlist System</h2>
             <p className="text-gray-600 dark:text-gray-300 text-center leading-relaxed">
@@ -38,7 +39,9 @@ function LandingPage() {
               className="mt-auto w-full md:w-auto"
             >
               <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center space-x-2">
-                <FiLock className="w-5 h-5" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
                 <span>Explore Allowlist</span>
               </button>
             </Link>
@@ -48,7 +51,9 @@ function LandingPage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-gray-700">
           <div className="flex flex-col items-center h-full space-y-6">
             <div className="p-4 bg-purple-100 dark:bg-purple-900 rounded-full">
-              <FiDollarSign className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2a3 3 0 0 1 3 3v1.07c3.39.49 6 3.39 6 6.93a7 7 0 0 1-7 7 7 7 0 0 1-7-7c0-3.53 2.61-6.44 6-6.93V5a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v1h2V5a1 1 0 0 0-1-1zm-5 9a5 5 0 0 0 10 0h-2a3 3 0 0 1-6 0H7z"/>
+              </svg>
             </div>
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Subscription System</h2>
             <p className="text-gray-600 dark:text-gray-300 text-center leading-relaxed">
@@ -60,7 +65,9 @@ function LandingPage() {
               className="mt-auto w-full md:w-auto"
             >
               <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center space-x-2">
-                <FiBell className="w-5 h-5" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
                 <span>Explore Subscriptions</span>
               </button>
             </Link>
@@ -90,9 +97,7 @@ function App() {
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">SEAL Protocol</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <ConnectButton 
-                className="bg-gray-800 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
-              />
+              <ConnectButton />
             </div>
           </div>
         </div>
@@ -101,7 +106,9 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-8">
           <div className="flex items-start space-x-4 text-blue-800 dark:text-blue-200">
-            <FiInfo className="w-6 h-6 flex-shrink-0 mt-1" />
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 flex-shrink-0 mt-1" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 100-16 8 8 0 000 16zm-1-5h2v2h-2v-2zm0-8h2v6h-2V7z"/>
+            </svg>
             <div className="space-y-3 text-sm">
               <p>🚀 Code available on <a href="https://github.com/MystenLabs/seal/tree/main/examples" className="underline hover:text-blue-600 dark:hover:text-blue-400">GitHub</a></p>
               <p>🔗 Testnet-only: Use <a href="https://faucet.sui.io/" className="underline hover:text-blue-600 dark:hover:text-blue-400">Sui Faucet</a> for test tokens</p>
@@ -132,7 +139,9 @@ function App() {
                               />
                               <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center space-x-2">
-                                  <FiUploadCloud className="w-5 h-5" />
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                  </svg>
                                   <span>Content Upload</span>
                                 </h3>
                                 <WalrusUpload
@@ -171,7 +180,9 @@ function App() {
                               />
                               <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                                 <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center space-x-2">
-                                  <FiUploadCloud className="w-5 h-5" />
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                  </svg>
                                   <span>Premium Content Upload</span>
                                 </h3>
                                 <WalrusUpload
