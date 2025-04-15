@@ -4,18 +4,9 @@
 import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { useNetworkVariable } from './networkConfig';
-import { 
-  Button, 
-  Card, 
-  Flex, 
-  Heading, 
-  Text, 
-  Box, 
-  Separator,
-  Badge 
-} from '@radix-ui/themes';
+import { Button, Card, Flex, Heading, Text, Box, Separator, Badge } from '@radix-ui/themes';
 import { getObjectExplorerLink } from './utils';
-import { Loader2, ExternalLink, List, Users } from 'lucide-react';
+import { ExternalLink, List, Users } from 'lucide-react';
 
 export interface Cap {
   id: string;
@@ -35,14 +26,11 @@ export function AllAllowlist() {
   const suiClient = useSuiClient();
 
   const [cardItems, setCardItems] = useState<CardItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const getCapObj = useCallback(async () => {
     if (!currentAccount?.address) return;
-    
+
     try {
-      setIsLoading(true);
-      
       const res = await suiClient.getOwnedObjects({
         owner: currentAccount.address,
         options: {
@@ -53,7 +41,6 @@ export function AllAllowlist() {
           StructType: `${packageId}::allowlist::Cap`,
         },
       });
-      
       const caps = res.data
         .map((obj) => {
           const fields = (obj!.data!.content as { fields: any }).fields;
@@ -63,7 +50,7 @@ export function AllAllowlist() {
           };
         })
         .filter((item) => item !== null) as Cap[];
-        
+
       const cardItems: CardItem[] = await Promise.all(
         caps.map(async (cap) => {
           const allowlist = await suiClient.getObject({
@@ -79,43 +66,29 @@ export function AllAllowlist() {
           };
         }),
       );
-      
+
       setCardItems(cardItems);
-      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching allowlists:", error);
-      setIsLoading(false);
     }
   }, [currentAccount?.address, packageId, suiClient]);
 
   useEffect(() => {
     getCapObj();
-    
-    // Set up interval to refresh data
-    const intervalId = setInterval(() => {
-      getCapObj();
-    }, 5000);
-    
-    return () => clearInterval(intervalId);
   }, [getCapObj]);
 
   return (
     <Box style={{ maxWidth: '100%' }}>
-      {isLoading ? (
-        <Flex align="center" justify="center" py="6">
-          <Loader2 className="animate-spin" size={24} />
-        </Flex>
-      ) : cardItems.length === 0 ? (
-        <Card size="2" style={{ padding: '16px', textAlign: 'center' }}>
-          <Flex direction="column" align="center" justify="center" gap="2" py="4">
-            <List size={24} strokeWidth={1.5} style={{ opacity: 0.6 }} />
-            <Text color="gray">No allowlists found.</Text>
-          </Flex>
-        </Card>
-      ) : (
-        <Flex direction="column" gap="3">
-          {cardItems.map((item) => (
-            <Card key={`${item.cap_id}-${item.allowlist_id}`} style={{ overflow: 'hidden' }}>
+        {cardItems.length === 0 ? (
+          <Card style={{ padding: '16px', textAlign: 'center' }}>
+            <Flex direction="column" align="center" justify="center" gap="2" py="4">
+              <List size={24} strokeWidth={1.5} style={{ opacity: 0.6 }} />
+              <Text color="gray">No allowlists found.</Text>
+            </Flex>
+          </Card>
+        ) : (
+          cardItems.map((item) => (
+            <Card key={`${item.cap_id}-${item.allowlist_id}`} style={{ overflow: 'hidden', marginBottom: '1rem' }}>
               <Flex direction="column" gap="3" p="4">
                 <Flex justify="between" align="center">
                   <Flex align="center" gap="2">
@@ -124,7 +97,7 @@ export function AllAllowlist() {
                   </Flex>
                   <Badge variant="soft" radius="full">
                     <a 
-                      href={`https://explorer.sui.io/object/${item.allowlist_id}`} 
+                      href={getObjectExplorerLink(item.allowlist_id).toString()}
                       target="_blank" 
                       rel="noopener noreferrer"
                       style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '4px' }}
@@ -134,14 +107,11 @@ export function AllAllowlist() {
                     </a>
                   </Badge>
                 </Flex>
-                
                 <Separator size="4" />
-                
                 <Flex align="center" gap="1">
                   <Text size="2" weight="bold" color="gray">Addresses in list:</Text>
                   <Text size="2">{item.list.length}</Text>
                 </Flex>
-                
                 <Flex justify="end" mt="2">
                   <Button 
                     onClick={() => {
@@ -156,9 +126,8 @@ export function AllAllowlist() {
                 </Flex>
               </Flex>
             </Card>
-          ))}
-        </Flex>
-      )}
+          ))
+        )}
     </Box>
   );
 }
