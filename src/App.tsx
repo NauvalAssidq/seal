@@ -113,17 +113,17 @@ function LandingPage() {
     <Section size="3">
       <Flex direction="column" gap="6" align="center" mb="6">
         <Heading size="8" align="center">Seal Example Applications</Heading>
-        <Text size="4" color="gray" align="center" style={{ maxWidth: '640px' }}>
+        <Text size="4" color="gray" align="center" style={{ maxWidth: '720px' }}>
           Explore secure, blockchain-based content access control using Seal on Sui.
         </Text>
       </Flex>
       
-      <Grid columns={{ initial: '1', sm: '2' }} gap="6" width="100%">
+      <Grid columns={{ initial: '1', sm: '2' }} gap="4" width="100%">
         <FeatureCard 
           title="Allowlist Example"
           icon={<ListChecks size={24} />}
           description="Control access to encrypted content with a creator-defined allowlist. Add or remove users, and only those on the list can decrypt associated files."
-          buttonText="Try Allowlist"
+          buttonText="Allowlist"
           linkTo="/allowlist-example"
         />
         
@@ -131,7 +131,7 @@ function LandingPage() {
           title="Subscription Example"
           icon={<Ticket size={24} />}
           description="Set up subscription-based access to your content. Define fees and durations. Only users with valid subscription NFTs can decrypt your protected files."
-          buttonText="Try Subscription"
+          buttonText="Subscricption"
           linkTo="/subscription-example"
         />
       </Grid>

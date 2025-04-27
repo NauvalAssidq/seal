@@ -322,7 +322,7 @@ const FeedsToSubscribe: React.FC<{ suiAddress: string }> = ({ suiAddress }) => {
   };
 
   return (
-    <Card style={{ maxWidth: '800px', margin: '0 auto', borderRadius: '12px', overflow: 'hidden' }}>
+    <Card style={{ maxWidth: '100%', margin: '0', borderRadius: '12px', overflow: 'hidden' }}>
       {!feed ? (
         <Flex direction="column" align="center" justify="center" gap="4" p="6">
           <Loader2 className="animate-spin" size={32} />
@@ -330,7 +330,7 @@ const FeedsToSubscribe: React.FC<{ suiAddress: string }> = ({ suiAddress }) => {
         </Flex>
       ) : (
         <Box>
-          <Box p="6" style={{ background: 'var(--accent-9)', color: 'white' }}>
+          <Box p="6" style={{ borderRadius:'8px', background: 'var(--accent-9)', color: 'white' }}>
             <Heading as="h2" size="5">
               {feed.name}
             </Heading>
