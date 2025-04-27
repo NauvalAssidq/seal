@@ -322,7 +322,7 @@ const FeedsToSubscribe: React.FC<{ suiAddress: string }> = ({ suiAddress }) => {
   };
 
   return (
-    <Card style={{ maxWidth: '800px', margin: '0 auto', borderRadius: '12px', overflow: 'hidden' }}>
+    <Card style={{margin: '0', borderRadius: '12px', overflow: 'hidden' }}>
       {!feed ? (
         <Flex direction="column" align="center" justify="center" gap="4" p="6">
           <Loader2 className="animate-spin" size={32} />
@@ -338,7 +338,7 @@ const FeedsToSubscribe: React.FC<{ suiAddress: string }> = ({ suiAddress }) => {
               <Text size="2">ID: </Text>
               <Badge variant="soft" highContrast>
                 <a 
-                  href={`https://explorer.sui.io/object/${feed.id}`} 
+                  href={`https://testnet.suivision.xyz/object/${feed.id}`} //marking this as a link
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{ textDecoration: 'none', color: 'inherit' }}
